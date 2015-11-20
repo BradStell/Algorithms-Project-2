@@ -64,9 +64,22 @@ public class Main {
                     case "-d":
                         Algorithm.DynamicProgramming(taskArray, numProcessors);
                         break;
+                    default:
+                        System.out.println(
+                                "\nInvalid flag " + flag + " used."
+                                + "\nValid flags are:"
+                                + "\n\t-b for Brute Force"
+                                + "\n\t-d for Dynamic Programming\n"
+                        );
+
+                        System.exit(2);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(
+                        "Cannot find the file " + file.toString()
+                        + "\nExiting Program"
+                );
+                System.exit(3);
             }
         }
     }

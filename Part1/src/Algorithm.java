@@ -13,6 +13,14 @@ public class Algorithm {
     public static void BruteForce(int[] taskArray, int numProcessors) {
 
         // Implement algorithm here
+        System.out.print("[");
+        for (int i = 0; i < taskArray.length; i++) {
+            System.out.print(taskArray[i]);
+            if (i != taskArray.length - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.print("]");
     }
 
     /**
