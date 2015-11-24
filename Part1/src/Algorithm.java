@@ -12,42 +12,75 @@ public class Algorithm {
      */
 
     public static void BruteForce(int[] taskArray, int numProcessors) {
-
+        /*Method Call:  BruteForce(
+                            <task array>,
+                            <# of processors>,
+                            <array to store work load for each processor>,
+                            <the current best load interval for processors (Max int)>,
+                            <the starting position for iterating the array>
+                        );*/
         System.out.print(BruteForce(taskArray, numProcessors, new int[numProcessors], Integer.MAX_VALUE, 0));
     }
 
-    private static int BruteForce(int[] taskArray, int numProcessors, int[] procWork, int bestL, int start) {
+    private static int BruteForce(int[] taskArray, int currentProcessor, int[] procWork, int bestL, int i) {
 
-        if (numProcessors > 0) {
+        // Recursion Base Condition (current processor must be greater than 0)
+        // For position in processor work load array
+        if (currentProcessor > 0) {
 
-            int i;
-            for (i = start; i < taskArray.length; i++) {
-                procWork[numProcessors - 1] += taskArray[i];
-                BruteForce(taskArray, numProcessors - 1, procWork, bestL, start + 1);
+            // Loop through task array & assign current task(s) to current working processor
+            while (i < taskArray.length) {
 
-                int minMax = getMinLoad(procWork);
+                // Add current task to the processor we are working with
+                procWork[currentProcessor - 1] += taskArray[i];
 
-                if (minMax < bestL) {
-                    bestL = minMax;
+                // Recurse with the next (previous) processor and the next item in the task array
+                int currentLoad = BruteForce(taskArray, currentProcessor - 1, procWork, bestL, i+1);
+
+                // Change overall best load if current load is better
+                if (currentLoad < bestL) {
+                    bestL = currentLoad;
+                }
+
+                // Go to next item in task array
+                i++;
+            }
+
+            // Reset the current working processors tasks to 0 to get ready for the next round of permutations
+            procWork[currentProcessor - 1] = 0;
+
+        } else {    // If base case was met
+
+            // If we have done all permutations of the task array
+            if (i == taskArray.length) {
+                // Print for testing only
+                Print(procWork);
+
+                // Get most loaded processors load
+                int worstLoad = getMaxLoad(procWork);
+
+                // Change the overall best max processor load if the current is better than overall
+                if (worstLoad < bestL) {
+                    bestL = worstLoad;
                 }
             }
-            procWork[numProcessors - 1] = 0;
-
-        } else {
-
-            /// Printing
-            System.out.println("***");
-            for (int i = 0; i < procWork.length; i++) {
-                System.out.print(procWork[i] + " ");
-            }
-            System.out.println();
-            ///// end Printing
         }
 
+        // Return the most loaded processors total load
         return bestL;
     }
 
-    private static int getMinLoad(int[] procWork) {
+    private static void Print(int[] procWork) {
+        /// Printing
+        System.out.println("***");
+        for (int j = 0; j < procWork.length; j++) {
+            System.out.print(procWork[j] + " ");
+        }
+        System.out.println();
+        ///// end Printing
+    }
+
+    private static int getMaxLoad(int[] procWork) {
 
         int max = procWork[0];
         for (int i = 1; i < procWork.length; i++) {
@@ -57,91 +90,6 @@ public class Algorithm {
         }
         return max;
     }
-
-
-    /** My recursion, works with 2 */
-    /*public static void BruteForce(int[] taskArray, int numProcessors) {
-
-        int[] procArray = new int[numProcessors];
-        int maxL = Integer.MAX_VALUE;
-
-        for (int i = 0; i < numProcessors - 1; i++) {
-            procArray[i] = taskArray[i];
-        }
-
-        int max = BruteForce(taskArray, procArray, numProcessors - 1, maxL, numProcessors, 3);
-
-        System.out.print("maxL: " + max);
-    }
-
-    private static int BruteForce(int[] taskArray, int[] procArray, int start, int maxL, int numProc, int count) {
-
-        if (start < taskArray.length) {
-
-            for (int i = start; i < taskArray.length; i++) {
-                procArray[numProc - 1] += taskArray[i];
-            }
-
-            int tempMax = getMax(procArray);
-
-            if (tempMax < maxL) {
-                maxL = tempMax;
-            }
-
-            procArray[numProc - 2] += taskArray[start];
-            procArray[numProc - 1] = 0;
-            return BruteForce(taskArray, procArray, start + 1, maxL, numProc, count);
-
-        } else {
-
-            return maxL;
-        }
-    }
-
-    private static int getMax(int[] parray) {
-
-        int max = 0;
-        for (int i = 0; i < parray.length; i++) {
-            if (parray[i] > max){
-                max = parray[i];
-            }
-        }
-
-        return max;
-    }*/
-
-
-    /** Linear Brute Force Algo */
-    /*private static int getMax(int p1sum, int p2sum) {
-
-        if (p1sum > p2sum)
-            return p1sum;
-        else
-            return p2sum;
-    }
-
-    public static int BruteForce(int[] taskArray, int numProcessors) {
-
-        int p1sum = 0, p2sum = 0, bestL = Integer.MAX_VALUE;
-
-        for (int i = 0; i < taskArray.length; i++) {
-            p2sum += taskArray[i];
-        }
-
-        for (int i = 0; i < taskArray.length - 1; i++) {
-            p1sum += taskArray[i];
-            p2sum -= taskArray[i];
-            int max = getMax(p1sum, p2sum);
-
-            if (max < bestL) {
-                bestL = max;
-            }
-        }
-
-        return bestL;
-
-        //printArray(taskArray);
-    }*/
 
     /**
      * Dynamic Programming algorithm
