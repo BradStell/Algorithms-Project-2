@@ -14,32 +14,32 @@ public class Algorithm {
     public static void BruteForce(int[] taskArray, int numProcessors) {
         /*Method Call:  BruteForce(
                             <task array>,
-                            <# of processors>,
+                            <# of processors (-1 for array locations>,
                             <array to store work load for each processor>,
                             <the current best load interval for processors (Max int)>,
                             <the starting position for iterating the array>
                         );*/
-        System.out.print(BruteForce(taskArray, numProcessors, new int[numProcessors], Integer.MAX_VALUE, 0));
+        System.out.print(BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0));
     }
 
-    private static int BruteForce(int[] taskArray, int currentProcessor, int[] procWork, int bestL, int i) {
+    private static int BruteForce(int[] taskArray, int currentProcessor, int[] processorWork, int bestLoad, int i) {
 
         // Recursion Base Condition (current processor must be greater than 0)
         // For position in processor work load array
-        if (currentProcessor > 0) {
+        if (currentProcessor >= 0) {
 
             // Loop through task array & assign current task(s) to current working processor
             while (i < taskArray.length) {
 
                 // Add current task to the processor we are working with
-                procWork[currentProcessor - 1] += taskArray[i];
+                processorWork[currentProcessor] += taskArray[i];
 
                 // Recurse with the next (previous) processor and the next item in the task array
-                int currentLoad = BruteForce(taskArray, currentProcessor - 1, procWork, bestL, i+1);
+                int currentLoad = BruteForce(taskArray, currentProcessor - 1, processorWork, bestLoad, i+1);
 
                 // Change overall best load if current load is better
-                if (currentLoad < bestL) {
-                    bestL = currentLoad;
+                if (currentLoad < bestLoad) {
+                    bestLoad = currentLoad;
                 }
 
                 // Go to next item in task array
@@ -47,27 +47,27 @@ public class Algorithm {
             }
 
             // Reset the current working processors tasks to 0 to get ready for the next round of permutations
-            procWork[currentProcessor - 1] = 0;
+            processorWork[currentProcessor] = 0;
 
         } else {    // If base case was met
 
             // If we have done all permutations of the task array
             if (i == taskArray.length) {
                 // Print for testing only
-                Print(procWork);
+                Print(processorWork);
 
                 // Get most loaded processors load
-                int worstLoad = getMaxLoad(procWork);
+                int worstLoad = getMaxLoad(processorWork);
 
                 // Change the overall best max processor load if the current is better than overall
-                if (worstLoad < bestL) {
-                    bestL = worstLoad;
+                if (worstLoad < bestLoad) {
+                    bestLoad = worstLoad;
                 }
             }
         }
 
         // Return the most loaded processors total load
-        return bestL;
+        return bestLoad;
     }
 
     private static void Print(int[] procWork) {
