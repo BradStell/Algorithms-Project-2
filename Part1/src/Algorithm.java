@@ -8,9 +8,11 @@
 public class Algorithm {
 
     /**
-     * Brute Force algorithms
+     * Brute Force algorithms entry point from outside code
+     *
+     * Designed to accept the task array to process and the number of processors.
+     * Hides implementation for more complex BruteForce algo that recurses on itself
      */
-
     public static void BruteForce(int[] taskArray, int numProcessors) {
         /*Method Call:  BruteForce(
                             <task array>,
@@ -22,6 +24,18 @@ public class Algorithm {
         System.out.print(BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0));
     }
 
+    /**
+     * Main brute force algo that recurses on itself to solve the brute force approach to
+     * partitioning the task array into all possible partitoins given the number of processors.
+     *
+     * @param taskArray - The array of tasks
+     * @param currentProcessor - The number of processors -1 to compensate for array placement
+     * @param processorWork - An array of length of number of processors, used to store
+     *                      each processors total work load at any given time
+     * @param bestLoad - The minimal most loaded processor at a given partition
+     * @param i - The index corresponding to the item being processed currently in the task array
+     * @return
+     */
     private static int BruteForce(int[] taskArray, int currentProcessor, int[] processorWork, int bestLoad, int i) {
 
         // Recursion Base Condition (current processor must be greater than 0)
@@ -70,6 +84,11 @@ public class Algorithm {
         return bestLoad;
     }
 
+    /**
+     * Prints the processors work load after each full partition
+     * Used for debugging only
+     * @param procWork - the array of processor work loads
+     */
     private static void Print(int[] procWork) {
         /// Printing
         System.out.println("***");
@@ -80,6 +99,13 @@ public class Algorithm {
         ///// end Printing
     }
 
+    /**
+     * Returns the most loaded processors work load from the processor array
+     *
+     * @param procWork - Array of length number of processors containing the work load for
+     *                 each processor at a given partition of the task array
+     * @return - The most loaded processors amount of work
+     */
     private static int getMaxLoad(int[] procWork) {
 
         int max = procWork[0];
@@ -97,17 +123,5 @@ public class Algorithm {
     public static void DynamicProgramming(int[] taskArray, int numProcessors) {
 
         // Implement algorithm here
-    }
-
-    private static void printArray(int[] taskArray) {
-
-        System.out.print("[");
-        for (int i = 0; i < taskArray.length; i++) {
-            System.out.print(taskArray[i]);
-            if (i != taskArray.length - 1) {
-                System.out.print(", ");
-            }
-        }
-        System.out.print("]");
     }
 }
