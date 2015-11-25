@@ -73,7 +73,7 @@ public class Algorithm {
     private static void Print(int[] procWork) {
         /// Printing
         System.out.println("***");
-        for (int j = 0; j < procWork.length; j++) {
+        for (int j = procWork.length - 1; j >= 0; j--) {
             System.out.print(procWork[j] + " ");
         }
         System.out.println();
