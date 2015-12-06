@@ -9,7 +9,7 @@ import java.util.List;
  *  - Dynamic Programming
  */
 public class Algorithm {
-
+    
     /**
      * Brute Force algorithms entry point from outside code
      *
@@ -71,14 +71,16 @@ public class Algorithm {
             // If we have done all permutations of the task array
             if (i == taskArray.length) {
                 // Print for testing only
-                //Print(processorWork);
+
 
                 // Get most loaded processors load
                 int worstLoad = getMaxLoad(processorWork);
 
                 // Change the overall best max processor load if the current is better than overall
-                if (worstLoad < bestLoad)
+                if (worstLoad < bestLoad) {
                     bestLoad = worstLoad;
+                    Print(processorWork);
+                }
             }
         }
 
