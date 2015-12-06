@@ -4,13 +4,16 @@ import java.util.List;
 /**
  * Created by Brad on 11/20/2015.
  *
- * Static class that contains Project 2 - part 1 algorithms
+ * Static class that contains Project 2 - part 1 & 2 algorithms
  *  - Brute Force
  *  - Dynamic Programming
+ *  - Parametric Search
+ *  - Greedy
  */
 public class Algorithm {
 
-    private static List<Integer> masterLoadKeeper;
+    // Used with BruteForce to keep track of processor loads
+    private static List<Integer> masterLoadKeeper = new ArrayList<>();
 
     /**
      * Brute Force algorithms entry point from outside code
@@ -26,14 +29,8 @@ public class Algorithm {
                             <the current best load interval for processors (Max int)>,
                             <the starting position for iterating the array>
                         );*/
-        masterLoadKeeper = new ArrayList<>();
-
-        int bestWorstLoad = BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0);
-
-
-
         return new ArrayList<Integer>() {{
-            add(bestWorstLoad);
+            add(BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0));
             for (int i : masterLoadKeeper)
                 add(i);
         }};
@@ -64,14 +61,10 @@ public class Algorithm {
                 processorWork[currentProcessor] += taskArray[i];
 
                 // Recurse with the next (previous) processor and the next item in the task array
-                int currentLoad = BruteForce(taskArray, currentProcessor - 1, processorWork, bestLoad, i+1);
+                int currentLoad = BruteForce(taskArray, currentProcessor - 1, processorWork, bestLoad, i++ + 1);
 
                 // Change overall best load if current load is better
-                if (currentLoad < bestLoad)
-                    bestLoad = currentLoad;
-
-                // Go to next item in task array
-                i++;
+                if (currentLoad < bestLoad) bestLoad = currentLoad;
             }
 
             // Reset the current working processors tasks to 0 to get ready for the next round of permutations
@@ -81,9 +74,6 @@ public class Algorithm {
 
             // If we have done all permutations of the task array
             if (i == taskArray.length) {
-                // Print for testing only
-
-
                 // Get most loaded processors load
                 int worstLoad = getMaxLoad(processorWork);
 
@@ -101,31 +91,6 @@ public class Algorithm {
         return bestLoad;
     }
 
-    private static void Print(List<List<Integer>> lists) {
-
-        for (List<Integer> list : lists) {
-            for (Integer i : list) {
-                System.out.print(i + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    /**
-     * Prints the processors work load after each full partition
-     * Used for debugging only
-     * @param procWork - the array of processor work loads
-     */
-    private static void Print(int[] procWork) {
-
-        System.out.println("***");
-
-        for (int j = procWork.length - 1; j >= 0; j--)
-            System.out.print(procWork[j] + " ");
-
-        System.out.println();
-    }
-
     /**
      * Returns the most loaded processors work load from the processor array
      *
@@ -134,22 +99,34 @@ public class Algorithm {
      * @return - The most loaded processors amount of work
      */
     private static int getMaxLoad(int[] procWork) {
+        int max = Integer.MIN_VALUE;
 
-        int max = procWork[0];
-        for (int i = 1; i < procWork.length; i++)
-            if (procWork[i] > max) max = procWork[i];
+        for (int in : procWork)
+            if (in > max) max = in;
 
         return max;
     }
 
     /**
      * Dynamic Programming algorithm
+     *
+     * Cannot figure out subproblem property. Also cannot figure out how to memoize brute force algorithm.
      */
     public static void DynamicProgramming(int[] taskArray, int numProcessors) {
 
         // Implement algorithm here
     }
 
+    /**
+     * Implements the greedy algorithm (Algorithm.Greedy) with an added target load parameter. If the target load is less than the
+     * optimal* (based on the greedy algo - not actually optimal) most loaded processor then it will return null.
+     * If the optimal* solution is less than the target load then the processor partitions will be returned.
+     *
+     * @param taskArray - the arra of tasks
+     * @param numProcessors - how many processors will share the tasks
+     * @param targetLoad - the target max load of the most loaded processor
+     * @return - List<List<Integer>> of processor partitions, or null if target load not met
+     */
     public static List<List<Integer>> ParametricSearch(int[] taskArray, int numProcessors, int targetLoad) {
 
         // Divide sum of task array by the ideal load factor
@@ -163,6 +140,19 @@ public class Algorithm {
         return (mostLoaded <= targetLoad) ? processorWork : null;
     }
 
+    /**
+     * Takes a greedy approach which is ok and works practically for real life situations, however
+     * is not guaranteed to return the actual optimal solution. However this can compute almost
+     * optimal solutions in O(n) time compared to the O(n!) time from Brute Force algorithm.
+     *
+     * Divides the sum of all tasks by the number of processors and attempts to distribute tasks
+     * evenly until the sum of an individual processor exceeds (or would exceed) the decided sum per
+     * processor.
+     *
+     * @param taskArray - the array of tasks
+     * @param numProcessors - how many processors will share these tasks
+     * @return - List<List<Integer>> containing the partitions of each processor
+     */
     public static List<List<Integer>> Greedy(int[] taskArray, int numProcessors) {
 
         // Divide sum of task array by the # of processors
@@ -190,19 +180,24 @@ public class Algorithm {
         return processorWork;
     }
 
+    /**
+     * Calculates the sum of elements in a List<Integer> data structure
+     * @param list - the list to sum
+     * @return - int of the sum of all elements in the list
+     */
     private static int sum(List<Integer> list) {
-
         int sum = 0;
-
         for (int i : list) sum += i;
-
         return sum;
     }
 
+    /**
+     * Calculates the sum of elements in an int[] array
+     * @param array - array to sum
+     * @return - int of the sum of all elements in the array
+     */
     private static int sum(int[] array) {
-
         int sum = 0;
-
         for (int i : array) sum += i;
 
         return sum;
