@@ -24,6 +24,7 @@ public class Algorithm {
                             <the current best load interval for processors (Max int)>,
                             <the starting position for iterating the array>
                         );*/
+
         return BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0);
     }
 
@@ -83,6 +84,16 @@ public class Algorithm {
 
         // Return the most loaded processors total load
         return bestLoad;
+    }
+
+    private static void Print(List<List<Integer>> lists) {
+
+        for (List<Integer> list : lists) {
+            for (Integer i : list) {
+                System.out.print(i + " ");
+            }
+            System.out.println();
+        }
     }
 
     /**
