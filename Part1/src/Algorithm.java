@@ -123,5 +123,11 @@ public class Algorithm {
     public static void DynamicProgramming(int[] taskArray, int numProcessors) {
 
         // Implement algorithm here
+
+    }
+
+    private static int DynamicProgramming() {
+
+
     }
 }
