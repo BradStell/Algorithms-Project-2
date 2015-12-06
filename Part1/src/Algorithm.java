@@ -55,9 +55,8 @@ public class Algorithm {
                 int currentLoad = BruteForce(taskArray, currentProcessor - 1, processorWork, bestLoad, i+1);
 
                 // Change overall best load if current load is better
-                if (currentLoad < bestLoad) {
+                if (currentLoad < bestLoad)
                     bestLoad = currentLoad;
-                }
 
                 // Go to next item in task array
                 i++;
@@ -77,9 +76,8 @@ public class Algorithm {
                 int worstLoad = getMaxLoad(processorWork);
 
                 // Change the overall best max processor load if the current is better than overall
-                if (worstLoad < bestLoad) {
+                if (worstLoad < bestLoad)
                     bestLoad = worstLoad;
-                }
             }
         }
 
@@ -93,13 +91,13 @@ public class Algorithm {
      * @param procWork - the array of processor work loads
      */
     private static void Print(int[] procWork) {
-        /// Printing
+
         System.out.println("***");
-        for (int j = procWork.length - 1; j >= 0; j--) {
+
+        for (int j = procWork.length - 1; j >= 0; j--)
             System.out.print(procWork[j] + " ");
-        }
+
         System.out.println();
-        ///// end Printing
     }
 
     /**
@@ -112,11 +110,9 @@ public class Algorithm {
     private static int getMaxLoad(int[] procWork) {
 
         int max = procWork[0];
-        for (int i = 1; i < procWork.length; i++) {
-            if (procWork[i] > max) {
-                max = procWork[i];
-            }
-        }
+        for (int i = 1; i < procWork.length; i++)
+            if (procWork[i] > max) max = procWork[i];
+
         return max;
     }
 
@@ -126,11 +122,19 @@ public class Algorithm {
     public static void DynamicProgramming(int[] taskArray, int numProcessors) {
 
         // Implement algorithm here
-
     }
 
-    public static void ParametricSearch(int[] taskArray, int numProcessors) {
+    public static List<List<Integer>> ParametricSearch(int[] taskArray, int numProcessors, int targetLoad) {
 
+        // Divide sum of task array by the ideal load factor
+        List<List<Integer>> processorWork = Greedy(taskArray, numProcessors);
+
+        int mostLoaded = Integer.MIN_VALUE, sum;
+
+        for (List<Integer> list : processorWork)
+            if ((sum = sum(list)) > mostLoaded) mostLoaded = sum;
+
+        return (mostLoaded <= targetLoad) ? processorWork : null;
     }
 
     public static List<List<Integer>> Greedy(int[] taskArray, int numProcessors) {
@@ -139,14 +143,14 @@ public class Algorithm {
         int taskSum = sum(taskArray);
         int workPerProcessor = taskSum / numProcessors;
 
-        // Assign (around) this amount of work to each processor
-        @SuppressWarnings("unchecked")
+        // Make lists to hold processors work load
         List<List<Integer>> processorWork = new ArrayList<>();
         for (int i = 0; i < numProcessors; i++) processorWork.add(new ArrayList<>());
 
-        // Assign tasks to processors
+        // Assign (around) this amount of work to each processor
         int sum = 0, currentProcessor = 0;
         for (int i : taskArray) {
+
             if ((sum + i) <= workPerProcessor && currentProcessor < numProcessors) {
                 processorWork.get(currentProcessor).add(i);
                 sum += i;
@@ -160,12 +164,21 @@ public class Algorithm {
         return processorWork;
     }
 
+    private static int sum(List<Integer> list) {
+
+        int sum = 0;
+
+        for (int i : list) sum += i;
+
+        return sum;
+    }
+
     private static int sum(int[] array) {
 
         int sum = 0;
-        for (int i : array) {
-            sum += i;
-        }
+
+        for (int i : array) sum += i;
+
         return sum;
     }
 }

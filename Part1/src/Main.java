@@ -16,18 +16,13 @@ public class Main {
 
     public static void main (String[] args) {
 
-        if (args.length != 3) {
-            System.out.println(
-                    "\nIncorrect usage of program. See Program Instructions below:\n\n"
-                    + "PROGRAM INSTRUCTIONS"
-                    + "\nUse program like follows:"
-                    + "\njava Main <file to process> <-b for brute force || -d for dynamic programming || -p for parametric search || -g for gready algorithm> <# of processors>"
-                    + "\n\nExample for using dynamic programming with 8 processors on the file test.txt"
-                    + "\n\tjava Main test.txt -d 8\n\n"
-            );
+        if (args.length < 3 || args.length > 4)
+            ShowErrorMessage();
+        else if (args[1].equals("-p") && args.length != 4)
+            ShowErrorMessage();
+        else if(!args[1].equals("-p") && args.length != 3)
+            ShowErrorMessage();
 
-            System.exit(1);
-        }
 
         /**
          * If the program was instantiated correctly start program
@@ -53,21 +48,20 @@ public class Main {
 
                 // Populate taskArray from file data
                 for (int i = 0; i < numTasks; i++) {
-                    if ((line = reader.readLine()) != null) {
+                    if ((line = reader.readLine()) != null)
                         taskArray[i] = Integer.parseInt(line);
-                    }
                 }
 
                 // Route program based on flag
                 switch (flag) {
                     case "-b":
-                        System.out.print(Algorithm.BruteForce(taskArray, numProcessors));
+                        System.out.print("Most loaded processor = " + Algorithm.BruteForce(taskArray, numProcessors));
                         break;
                     case "-d":
                         Algorithm.DynamicProgramming(taskArray, numProcessors);
                         break;
                     case "-p":
-                        Algorithm.ParametricSearch(taskArray, numProcessors);
+                        System.out.println(printPartitions(Algorithm.ParametricSearch(taskArray, numProcessors, Integer.parseInt(args[3]))));
                         break;
                     case "-g":
                         System.out.println(printPartitions(Algorithm.Greedy(taskArray, numProcessors)));
@@ -92,12 +86,30 @@ public class Main {
         }
     }
 
+    private static void ShowErrorMessage() {
+
+        System.out.println(
+                "\nIncorrect usage of program. See Program Instructions below:\n\n"
+                        + "PROGRAM INSTRUCTIONS"
+                        + "\nUse program like follows:"
+                        + "\njava Main <file to process> [<-b for brute force || -d for dynamic programming || [<-p for parametric search> & <target Max Load>] || <-g for gready algorithm>] <# of processors>"
+                        + "\n\nExample for using dynamic programming with 8 processors on the file test.txt"
+                        + "\n\tjava Main test.txt -d 8"
+                        + "\n\nExample for using parametric search with target max load of 85 with file test.txt and 3 processors"
+                        + "\n\tjava Main test.txt -p 3 85\n"
+        );
+
+        System.exit(3);
+    }
+
     private static String printPartitions(List<List<Integer>> partitionLists) {
 
+        if (partitionLists == null) return "No";
+
         StringBuilder sb = new StringBuilder();
-        for (List<Integer> al : partitionLists) {
-            sb.append(print(al)).append("\n");
-        }
+
+        for (List<Integer> list : partitionLists)
+            sb.append(print(list)).append("\n");
 
         return sb.toString();
     }
@@ -106,6 +118,7 @@ public class Main {
 
         StringBuilder sb = new StringBuilder();
         int sum = 0;
+
         for (Integer i : arrayList) {
             sb.append(i).append(" ");
             sum += i;
