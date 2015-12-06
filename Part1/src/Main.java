@@ -55,7 +55,7 @@ public class Main {
                 // Route program based on flag
                 switch (flag) {
                     case "-b":
-                        System.out.print("Most loaded processor = " + Algorithm.BruteForce(taskArray, numProcessors));
+                        System.out.print(printBruteForce(Algorithm.BruteForce(taskArray, numProcessors)));
                         break;
                     case "-d":
                         Algorithm.DynamicProgramming(taskArray, numProcessors);
@@ -124,6 +124,16 @@ public class Main {
             sum += i;
         }
         sb.append(" sum = " + sum);
+
+        return sb.toString();
+    }
+
+    private static String printBruteForce(List<Integer> list) {
+
+        StringBuilder sb = new StringBuilder("Most Loaded Processor = " + list.get(0) + "\nProcessor loads -> ");
+
+        for (int i = list.size() - 1; i > 0; i--)
+            sb.append(list.get(i)).append(" ");
 
         return sb.toString();
     }

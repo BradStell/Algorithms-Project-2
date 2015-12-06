@@ -9,14 +9,16 @@ import java.util.List;
  *  - Dynamic Programming
  */
 public class Algorithm {
-    
+
+    private static List<Integer> masterLoadKeeper;
+
     /**
      * Brute Force algorithms entry point from outside code
      *
      * Designed to accept the task array to process and the number of processors.
      * Hides implementation for more complex BruteForce algo that recurses on itself
      */
-    public static int BruteForce(int[] taskArray, int numProcessors) {
+    public static List<Integer> BruteForce(int[] taskArray, int numProcessors) {
         /*Method Call:  BruteForce(
                             <task array>,
                             <# of processors (-1 for array locations>,
@@ -24,8 +26,17 @@ public class Algorithm {
                             <the current best load interval for processors (Max int)>,
                             <the starting position for iterating the array>
                         );*/
+        masterLoadKeeper = new ArrayList<>();
 
-        return BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0);
+        int bestWorstLoad = BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0);
+
+
+
+        return new ArrayList<Integer>() {{
+            add(bestWorstLoad);
+            for (int i : masterLoadKeeper)
+                add(i);
+        }};
     }
 
     /**
@@ -79,7 +90,9 @@ public class Algorithm {
                 // Change the overall best max processor load if the current is better than overall
                 if (worstLoad < bestLoad) {
                     bestLoad = worstLoad;
-                    Print(processorWork);
+                    masterLoadKeeper.clear();
+                    for (int in : processorWork)
+                        masterLoadKeeper.add(in);
                 }
             }
         }
