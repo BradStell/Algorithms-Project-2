@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Brad on 11/20/2015.
@@ -19,7 +21,7 @@ public class Main {
                     "\nIncorrect usage of program. See Program Instructions below:\n\n"
                     + "PROGRAM INSTRUCTIONS"
                     + "\nUse program like follows:"
-                    + "\njava Main <file to process> <-b for brute force || -d for dynamic programming> <# of processors>"
+                    + "\njava Main <file to process> <-b for brute force || -d for dynamic programming || -p for parametric search || -g for gready algorithm> <# of processors>"
                     + "\n\nExample for using dynamic programming with 8 processors on the file test.txt"
                     + "\n\tjava Main test.txt -d 8\n\n"
             );
@@ -59,10 +61,16 @@ public class Main {
                 // Route program based on flag
                 switch (flag) {
                     case "-b":
-                        Algorithm.BruteForce(taskArray, numProcessors);
+                        System.out.print(Algorithm.BruteForce(taskArray, numProcessors));
                         break;
                     case "-d":
                         Algorithm.DynamicProgramming(taskArray, numProcessors);
+                        break;
+                    case "-p":
+                        Algorithm.ParametricSearch(taskArray, numProcessors);
+                        break;
+                    case "-g":
+                        System.out.println(printPartitions(Algorithm.Greedy(taskArray, numProcessors)));
                         break;
                     default:
                         System.out.println(
@@ -82,5 +90,28 @@ public class Main {
                 System.exit(3);
             }
         }
+    }
+
+    private static String printPartitions(List<List<Integer>> partitionLists) {
+
+        StringBuilder sb = new StringBuilder();
+        for (List<Integer> al : partitionLists) {
+            sb.append(print(al)).append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private static String print(List<Integer> arrayList) {
+
+        StringBuilder sb = new StringBuilder();
+        int sum = 0;
+        for (Integer i : arrayList) {
+            sb.append(i).append(" ");
+            sum += i;
+        }
+        sb.append(" sum = " + sum);
+
+        return sb.toString();
     }
 }

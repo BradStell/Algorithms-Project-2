@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Brad on 11/20/2015.
  *
@@ -13,7 +16,7 @@ public class Algorithm {
      * Designed to accept the task array to process and the number of processors.
      * Hides implementation for more complex BruteForce algo that recurses on itself
      */
-    public static void BruteForce(int[] taskArray, int numProcessors) {
+    public static int BruteForce(int[] taskArray, int numProcessors) {
         /*Method Call:  BruteForce(
                             <task array>,
                             <# of processors (-1 for array locations>,
@@ -21,7 +24,7 @@ public class Algorithm {
                             <the current best load interval for processors (Max int)>,
                             <the starting position for iterating the array>
                         );*/
-        System.out.print(BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0));
+        return BruteForce(taskArray, numProcessors - 1, new int[numProcessors], Integer.MAX_VALUE, 0);
     }
 
     /**
@@ -68,7 +71,7 @@ public class Algorithm {
             // If we have done all permutations of the task array
             if (i == taskArray.length) {
                 // Print for testing only
-                Print(processorWork);
+                //Print(processorWork);
 
                 // Get most loaded processors load
                 int worstLoad = getMaxLoad(processorWork);
@@ -126,8 +129,43 @@ public class Algorithm {
 
     }
 
-    private static int DynamicProgramming() {
+    public static void ParametricSearch(int[] taskArray, int numProcessors) {
 
+    }
 
+    public static List<List<Integer>> Greedy(int[] taskArray, int numProcessors) {
+
+        // Divide sum of task array by the # of processors
+        int taskSum = sum(taskArray);
+        int workPerProcessor = taskSum / numProcessors;
+
+        // Assign (around) this amount of work to each processor
+        @SuppressWarnings("unchecked")
+        List<List<Integer>> processorWork = new ArrayList<>();
+        for (int i = 0; i < numProcessors; i++) processorWork.add(new ArrayList<>());
+
+        // Assign tasks to processors
+        int sum = 0, currentProcessor = 0;
+        for (int i : taskArray) {
+            if ((sum + i) <= workPerProcessor && currentProcessor < numProcessors) {
+                processorWork.get(currentProcessor).add(i);
+                sum += i;
+            } else {
+                sum = i;
+                currentProcessor += (currentProcessor == numProcessors - 1) ? 0 : 1;
+                processorWork.get(currentProcessor).add(i);
+            }
+        }
+
+        return processorWork;
+    }
+
+    private static int sum(int[] array) {
+
+        int sum = 0;
+        for (int i : array) {
+            sum += i;
+        }
+        return sum;
     }
 }
