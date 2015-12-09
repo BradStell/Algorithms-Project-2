@@ -19,12 +19,8 @@ public class Main {
          * Catch if the program was instantiated incorrectly and print error message
          * and how to use the program message.
          */
-        if (args.length < 3 || args.length > 4)
-            ShowErrorMessage();
-        else if (args[1].equals("-p") && args.length != 4)
-            ShowErrorMessage();
-        else if(!args[1].equals("-p") && args.length != 3)
-            ShowErrorMessage();
+        if (args.length != 3) ShowErrorMessage();
+
 
 
         /**
@@ -62,7 +58,7 @@ public class Main {
                         Algorithm.DynamicProgramming(taskArray, numProcessors);
                         break;
                     case "-p":
-                        System.out.println( printPartitions(Algorithm.ParametricSearch(taskArray, numProcessors, Integer.parseInt(args[3]))) );
+                        System.out.println( printPartitions(Algorithm.ParametricSearch(taskArray, numProcessors)));
                         break;
                     case "-g":
                         System.out.println( printPartitions(Algorithm.Greedy(taskArray, numProcessors)) );
@@ -89,8 +85,6 @@ public class Main {
     }
 
     private static String printPartitions(List<List<Integer>> partitionLists) {
-
-        if (partitionLists == null) return "No";
 
         StringBuilder sb = new StringBuilder();
 
@@ -129,11 +123,9 @@ public class Main {
                 "\nIncorrect usage of program. See Program Instructions below:\n\n"
                         + "PROGRAM INSTRUCTIONS"
                         + "\nUse program like follows:"
-                        + "\njava Main <file to process> [<-b for brute force || -d for dynamic programming || [<-p for parametric search> & <target Max Load>] || <-g for gready algorithm>] <# of processors>"
+                        + "\njava Main <file to process> [<-b for brute force || -d for dynamic programming || <-p for parametric search> || <-g for gready algorithm>] <# of processors>"
                         + "\n\nExample for using dynamic programming with 8 processors on the file test.txt"
-                        + "\n\tjava Main test.txt -d 8"
-                        + "\n\nExample for using parametric search with target max load of 85 with file test.txt and 3 processors"
-                        + "\n\tjava Main test.txt -p 3 85\n"
+                        + "\n\tjava Main test.txt -d 8\n"
         );
 
         System.exit(3);

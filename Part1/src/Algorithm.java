@@ -124,20 +124,52 @@ public class Algorithm {
      *
      * @param taskArray - the arra of tasks
      * @param numProcessors - how many processors will share the tasks
-     * @param targetLoad - the target max load of the most loaded processor
      * @return - List<List<Integer>> of processor partitions, or null if target load not met
      */
-    public static List<List<Integer>> ParametricSearch(int[] taskArray, int numProcessors, int targetLoad) {
+    public static List<List<Integer>> ParametricSearch(int[] taskArray, int numProcessors) {
 
-        // Divide sum of task array by the ideal load factor
-        List<List<Integer>> processorWork = Greedy(taskArray, numProcessors);
+        List<List<Integer>> listPointer = null;
+        int targetLoad = sum(taskArray);
+        int mostLoaded = 0;
+        int low = 0;
+        int previous = 0;
 
-        int mostLoaded = Integer.MIN_VALUE, sum;
+        while (low != targetLoad) {
+            mostLoaded = calculateMostLoaded((listPointer = Greedy(taskArray, numProcessors, targetLoad)));
 
-        for (List<Integer> list : processorWork)
-            if ((sum = sum(list)) > mostLoaded) mostLoaded = sum;
+            if (mostLoaded <= targetLoad) {
+                previous = targetLoad;
+                targetLoad = ((targetLoad - low) / 2) + low;
 
-        return (mostLoaded <= targetLoad) ? processorWork : null;
+            } else {
+                low = targetLoad;
+                targetLoad = ((targetLoad - previous) / 2) + previous;
+            }
+        }
+
+        return listPointer;
+    }
+
+    private static int calculateMostLoaded(List<List<Integer>> procList) {
+
+        int max = Integer.MIN_VALUE, sum;
+        for (List<Integer> list : procList)
+            max = ((sum = calcSum(list)) > max) ? sum : max;
+        return max;
+    }
+
+    private static int calcSum(List<Integer> list) {
+        int sum = 0;
+        for (int i : list) sum += i;
+        return sum;
+    }
+
+    public static List<List<Integer>> Greedy(int[] taskArray, int numProcessors) {
+
+        int taskSum = sum(taskArray);
+        int workPerProcessor = taskSum / numProcessors;
+
+        return Greedy(taskArray, numProcessors, workPerProcessor);
     }
 
     /**
@@ -153,13 +185,9 @@ public class Algorithm {
      * @param numProcessors - how many processors will share these tasks
      * @return - List<List<Integer>> containing the partitions of each processor
      */
-    public static List<List<Integer>> Greedy(int[] taskArray, int numProcessors) {
+    private static List<List<Integer>> Greedy(int[] taskArray, int numProcessors, int load) {
 
-        // Divide sum of task array by the # of processors
-        int taskSum = sum(taskArray);
-        int workPerProcessor = taskSum / numProcessors;
-
-        // Make lists to hold processors work load
+        // Make lists to hold processors work load and initialize arraylist
         List<List<Integer>> processorWork = new ArrayList<>();
         for (int i = 0; i < numProcessors; i++) processorWork.add(new ArrayList<>());
 
@@ -167,7 +195,7 @@ public class Algorithm {
         int sum = 0, currentProcessor = 0;
         for (int i : taskArray) {
 
-            if ((sum + i) <= workPerProcessor && currentProcessor < numProcessors) {
+            if ((sum + i) <= load && currentProcessor < numProcessors) {
                 processorWork.get(currentProcessor).add(i);
                 sum += i;
             } else {
