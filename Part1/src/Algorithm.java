@@ -118,22 +118,28 @@ public class Algorithm {
     }
 
     /**
-     * Implements the greedy algorithm (Algorithm.Greedy) with an added target load parameter. If the target load is less than the
-     * optimal* (based on the greedy algo - not actually optimal) most loaded processor then it will return null.
-     * If the optimal* solution is less than the target load then the processor partitions will be returned.
+     * This search is similar to a binary search. It calls the Greedy algorithm below with a target load.
+     * This target load will start out as the sum of the process times in the task array. If there is a valid
+     * solution to the greedy algorithm with the target load then the greedy alorithm will be called again with
+     * half of the target load. If that is a valid solution the target load will get cut in half again, if it is
+     * not a valid solution then the new target load will be between the original target load and the current. This
+     * acts like a binary search moving in halves each time until the most valid solution is retrieved.
      *
-     * @param taskArray - the arra of tasks
+     * @param taskArray - the array of tasks
      * @param numProcessors - how many processors will share the tasks
-     * @return - List<List<Integer>> of processor partitions, or null if target load not met
+     * @return - List<List<Integer>> of processor partitions that is most optimal given the target load
+     *              and the greedy algorithm
      */
     public static List<List<Integer>> ParametricSearch(int[] taskArray, int numProcessors) {
 
-        List<List<Integer>> listPointer = null;
-        int targetLoad = sum(taskArray);
-        int mostLoaded = 0;
-        int low = 0;
-        int previous = 0;
+        // Local variables needed
+        List<List<Integer>> listPointer = null;     // Will hold the optimal partitions of tasks of the processors
+        int targetLoad = sum(taskArray);            // The current target load
+        int mostLoaded;                             // most loaded processor after each call to greedy algorithm
+        int low = 0;                                // Holds the low point for binary searching
+        int previous = 0;                           // Holds the upper point for binary searching
 
+        // Call greedy algorithm until we converge on a single target load
         while (low != targetLoad) {
             mostLoaded = calculateMostLoaded((listPointer = Greedy(taskArray, numProcessors, targetLoad)));
 
@@ -150,6 +156,11 @@ public class Algorithm {
         return listPointer;
     }
 
+    /**
+     * Returns the most loaded processor out of the processor partition lists
+     * @param procList - List<List<Integer>> List of Lists representing processor tasks
+     * @return int - Most loaded processor value
+     */
     private static int calculateMostLoaded(List<List<Integer>> procList) {
 
         int max = Integer.MIN_VALUE, sum;
@@ -158,6 +169,12 @@ public class Algorithm {
         return max;
     }
 
+    /**
+     * Works with calculateMostLoaded()
+     * returns the sum of a List<Integer>
+     * @param list - List<Integer> list of a particular processor to be summed
+     * @return
+     */
     private static int calcSum(List<Integer> list) {
         int sum = 0;
         for (int i : list) sum += i;
