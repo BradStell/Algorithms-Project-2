@@ -181,6 +181,16 @@ public class Algorithm {
         return sum;
     }
 
+    /**
+     * Greedy algorithm entry point. This calls the greedy algorithm with a target load factor with a greedy
+     * approach. The average task load per processor. It sums the task times and divides by the number of
+     * processors. It then attempts to assign to each processor tasks until the average is met. The last
+     * processor will take any overflow tasks.
+     *
+     * @param taskArray - array of tasks
+     * @param numProcessors - how many processors there are
+     * @return - List<List<Integer>> a list of lists of each processors tasks
+     */
     public static List<List<Integer>> Greedy(int[] taskArray, int numProcessors) {
 
         int taskSum = sum(taskArray);
